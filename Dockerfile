@@ -1,4 +1,4 @@
-FROM php:latest
+FROM php:7.4
 
 MAINTAINER twosee <twose@qq.com>
 
@@ -21,15 +21,11 @@ RUN apt-get update && apt-get install -y \
 
 # install php pdo_mysql opcache
 # WARNING: Disable opcache-cli if you run you php
-RUN docker-php-ext-configure gd && \
-    docker-php-ext-install \
+RUN docker-php-ext-install \
     iconv \
     gd \
     pdo_mysql \
     mysqli \
-    iconv \
-    json \
-    opcache \
     sockets \
     pcntl
 
