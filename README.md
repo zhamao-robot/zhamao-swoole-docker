@@ -8,4 +8,4 @@ A fast and light-weight swoole environment docker
 - iconv support
 - sockets support
 - http2 support
-- gd extension support
+- gd graphic extension support
