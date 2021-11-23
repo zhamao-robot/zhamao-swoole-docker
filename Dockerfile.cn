@@ -1,0 +1,49 @@
+FROM php:7.4.26-alpine3.14
+
+
+MAINTAINER jani <liberty_linlin@qq.com>
+
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
+    && apk update && apk upgrade
+
+
+WORKDIR /app/
+
+
+# apk 添加扩展依赖
+# 配置 GD
+# 使用 docker-php-ext-install 安装可直接安装的依赖
+RUN apk add libzip-dev zlib-dev libbz2 \
+        freetype-dev libpng-dev libjpeg-turbo-dev libxpm-dev \
+        curl-dev openssl-dev nghttp2-dev pcre-dev c-ares-dev \
+    && docker-php-ext-configure gd --enable-gd --with-jpeg --with-xpm --with-freetype \
+    && docker-php-ext-install bcmath iconv pcntl gd zip mysqli pdo_mysql \
+        sysvmsg sysvsem sysvshm sockets
+
+
+# 添加安装包到指定目录，只支持 tar 类型的安装包，所以需要去 pecl.php.net 网站下载
+# 安装编译工具
+# 编译安装
+# 清空安装包，无用的关联工具
+COPY ./pecl/ /app/pecl/
+RUN apk add gcc g++ autoconf make \
+    && printf "\n" | pecl install /app/pecl/redis-5.3.5RC1.tgz \
+    && printf "\n" | pecl install /app/pecl/swoole-4.8.2.tgz \
+    && docker-php-ext-enable swoole redis \
+    && rm -rf /app/pecl/ \
+    && apk del autoconf make
+
+
+# 添加 composer 并使用阿里源
+COPY --from=composer:2.1.12 /usr/bin/composer /usr/local/bin/composer
+RUN chmod +x /usr/local/bin/composer \
+    && /usr/local/bin/composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/ \
+    && composer self-update --clean-backups
+
+
+# 修改容器时区
+RUN apk add --no-cache tzdata \
+    && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+    && echo "Asia/Shanghai" > /etc/timezone \
+    && echo -e "[Date]\ndate.timezone=Asia/Shanghai" > /usr/local/etc/php/conf.d/timezone.ini

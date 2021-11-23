@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  php:
+    build: ./Dockerfile.cn
+    container_name: zhamao-php74
+    tty: true
+    ports:
+      - "20001:20001"
+    volumes:
+      # 项目目录
+      - ./:/app
+      - composer-data:/root/.composer/
+    networks:
+      - zhamao
+  redis:
+    image: redis:6.2.6-alpine
+    container_name: redis
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - zhamao
+  mysql:
+    image: mysql:5.6
+    container_name: mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - zhamao
+
+networks:
+  zhamao:
+
+volumes:
+  redis-data:
+  mysql-data:
+  composer-data:
