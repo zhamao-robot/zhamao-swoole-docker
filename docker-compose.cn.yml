@@ -6,7 +6,7 @@ services:
     container_name: zhamao-php74
     tty: true
     ports:
-      - "9000:9000"
+      - "20001:20001"
     volumes:
       # 项目目录
       - ./:/app
