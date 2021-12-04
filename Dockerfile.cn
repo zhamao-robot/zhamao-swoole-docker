@@ -1,11 +1,13 @@
-FROM php:7.4.26-alpine3.14
+FROM php:7.4.26-alpine3.13
 
 
 MAINTAINER jani <liberty_linlin@qq.com>
 
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories \
-    && apk update && apk upgrade
+    && apk update && apk upgrade \
+    && apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/v3.13/community/ gnu-libiconv=1.15-r3
+ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
 
 
 WORKDIR /app/
