@@ -1,4 +1,4 @@
-FROM php:7.4.26-alpine3.13
+FROM php:latest-alpine3.14
 
 
 MAINTAINER jani <liberty_linlin@qq.com>
