@@ -1,4 +1,4 @@
-FROM php:7.4
+FROM php:8.1
 
 MAINTAINER twosee <twose@qq.com>
 
